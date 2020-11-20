@@ -28,6 +28,8 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
+  #pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '6.26.0'
+  
   use_frameworks!
   use_modular_headers!
 
@@ -40,7 +42,13 @@ post_install do |installer|
   end
 end
 
+
 # add the Firebase pod for Google Analytics
-pod 'Firebase/Analytics'
+pod 'Firebase'
 # add pods for any other desired Firebase products
 # https://firebase.google.com/docs/ios/setup#available-pods
+
+# Add the pods for any other Firebase products you want to use in your app
+# For example, to use Firebase Authentication and Cloud Firestore
+#pod 'Firebase/Auth'
+#pod 'Firebase/Firestore'
