@@ -1,9 +1,9 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:sermon_atlas/cubit/sermon_cubit.dart';
-// import 'package:sermon_atlas/data/sermon_repository.dart';
-// import 'package:sermon_atlas/pages/sermon_search_page.dart';
-// import 'package:sermon_atlas/pages/login.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sermon_atlas/cubit/sermon_cubit.dart';
+import 'package:sermon_atlas/data/sermon_repository.dart';
+//import 'package:sermon_atlas/pages/sermon_search_page.dart';
+import 'package:sermon_atlas/pages/login.dart';
 
 // void main() => runApp(MyApp());
 
@@ -29,9 +29,13 @@ import 'package:flutter/material.dart';
 
 // Import the firebase_core plugin
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/pages/dummy.dart';
 import 'package:sermon_atlas/pages/login.dart';
+import 'package:sermon_atlas/pages/loginFirst.dart';
 import 'package:sermon_atlas/pages/signup.dart';
+import 'package:sermon_atlas/pages/sermon_search_page.dart';
 
 void main() {
   runApp(App());
@@ -75,11 +79,35 @@ class _AppState extends State<App> {
     } else {
       print('Good!!!------------------------------------');
     }
-    return MaterialApp(routes: <String, WidgetBuilder>{
-      '/screen1': (BuildContext context) => new LoginPage(),
-      '/screen2': (BuildContext context) => new SignUpPage(),
-      '/screen3': (BuildContext context) => new DummyPage(),
-    }, title: 'Material App', home: LoginPage());
+    // return MaterialApp(routes: <String, WidgetBuilder>{
+    //   '/screen1': (BuildContext context) => new LoginPage(),
+    //   '/screen2': (BuildContext context) => new SignUpPage(),
+    //   '/screen3': (BuildContext context) => new DummyPage(),
+    //   '/try': (BuildContext context) => new MyPage(),
+
+    // },
+    // title: 'Material App',
+    // //home: Navigator.push(context, '/screen1'));
+    // home: LoginPage());
+
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<SermonCubit>(
+            create: (context) => SermonCubit(FakeSermonRepository()),
+          ),
+        ],
+        child: MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/screen1': (BuildContext context) => new LoginPage(),
+            '/screen2': (BuildContext context) => new SignUpPage(),
+            '/screen3': (BuildContext context) => new DummyPage(),
+            '/try': (BuildContext context) => new MyPage(),
+            '/sermonSearchPage': (BuildContext context) => new SermonSearchPage(),
+          },
+          title: 'Material App',
+          //home: Navigator.push(context, '/screen1'));
+          home: LoginPage(),
+        ));
   }
   // Widget build(BuildContext context) {
   //   // Show error message if initialization failed
