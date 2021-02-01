@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/data/sermon_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -75,20 +76,34 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-    final signupButton = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        //minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: ()  {
-          Navigator.pushReplacementNamed(context, '/screen2');
-        },
-        child: Text("Sign Up",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+    // final signupButton = Material(
+    //   elevation: 5.0,
+    //   borderRadius: BorderRadius.circular(30.0),
+    //   color: Color(0xff01A0C7),
+    //   child: MaterialButton(
+    //     //minWidth: MediaQuery.of(context).size.width,
+    //     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+    //     onPressed: ()  {
+    //       Navigator.pushReplacementNamed(context, '/signupPage');
+    //     },
+    //     child: Text("Sign Up",
+    //         textAlign: TextAlign.center,
+    //         style: style.copyWith(
+    //             color: Colors.white, fontWeight: FontWeight.bold)),
+    //   ),
+    // );
+    final signupButton = RichText(
+      text: TextSpan(
+        style: TextStyle(color: Colors.blue),
+        children: <TextSpan>[
+          TextSpan(
+              text: 'New user? Sign up',
+              style: TextStyle(color: Colors.blue),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.pushReplacementNamed(context, '/signupPage');
+                }),
+        ],
       ),
     );
 
@@ -116,8 +131,14 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 35.0,
                 ),
-                loginButton,
-                signupButton,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  loginButton,
+                  SizedBox(width: 10),
+                  signupButton
+
+                ],),
                 SizedBox(
                   height: 15.0,
                 ),

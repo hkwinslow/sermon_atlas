@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/sermon_cubit.dart';
+import 'package:sermon_atlas/cubit/signup_cubit.dart';
 import 'package:sermon_atlas/data/sermon_repository.dart';
+import 'package:sermon_atlas/data/signup_repository.dart';
 //import 'package:sermon_atlas/pages/sermon_search_page.dart';
 import 'package:sermon_atlas/pages/login.dart';
 
@@ -12,8 +14,8 @@ import 'package:sermon_atlas/pages/login.dart';
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
 //       routes: <String, WidgetBuilder> {
-//         '/screen1': (BuildContext context) => new LoginPage(),
-//         '/screen2' : (BuildContext context) => new SermonSearchPage(),
+//         '/loginPage': (BuildContext context) => new LoginPage(),
+//         '/signupPage' : (BuildContext context) => new SermonSearchPage(),
 //       },
 //       title: 'Material App',
 //       home: BlocProvider(
@@ -31,7 +33,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/sermon_cubit.dart';
-import 'package:sermon_atlas/pages/dummy.dart';
 import 'package:sermon_atlas/pages/login.dart';
 import 'package:sermon_atlas/pages/loginFirst.dart';
 import 'package:sermon_atlas/pages/signup.dart';
@@ -80,14 +81,13 @@ class _AppState extends State<App> {
       print('Good!!!------------------------------------');
     }
     // return MaterialApp(routes: <String, WidgetBuilder>{
-    //   '/screen1': (BuildContext context) => new LoginPage(),
-    //   '/screen2': (BuildContext context) => new SignUpPage(),
-    //   '/screen3': (BuildContext context) => new DummyPage(),
+    //   '/loginPage': (BuildContext context) => new LoginPage(),
+    //   '/signupPage': (BuildContext context) => new SignUpPage(),
     //   '/try': (BuildContext context) => new MyPage(),
 
     // },
     // title: 'Material App',
-    // //home: Navigator.push(context, '/screen1'));
+    // //home: Navigator.push(context, '/loginPage'));
     // home: LoginPage());
 
     return MultiBlocProvider(
@@ -95,17 +95,19 @@ class _AppState extends State<App> {
           BlocProvider<SermonCubit>(
             create: (context) => SermonCubit(FakeSermonRepository()),
           ),
+          BlocProvider<SignupCubit>(
+            create: (context) => SignupCubit(FakeSignupRepository()),
+          ),
         ],
         child: MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/screen1': (BuildContext context) => new LoginPage(),
-            '/screen2': (BuildContext context) => new SignUpPage(),
-            '/screen3': (BuildContext context) => new DummyPage(),
+            '/loginPage': (BuildContext context) => new LoginPage(),
+            '/signupPage': (BuildContext context) => new SignUpPage(),
             '/try': (BuildContext context) => new MyPage(),
             '/sermonSearchPage': (BuildContext context) => new SermonSearchPage(),
           },
           title: 'Material App',
-          //home: Navigator.push(context, '/screen1'));
+          //home: Navigator.push(context, '/loginPage'));
           home: LoginPage(),
         ));
   }
