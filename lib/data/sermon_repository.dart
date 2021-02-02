@@ -45,6 +45,7 @@ class FakeSermonRepository implements SermonRepository {
         return sermons;
       },
     );
+    
   }
 }
 

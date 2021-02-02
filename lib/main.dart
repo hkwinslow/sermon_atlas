@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/cubit/signup_cubit.dart';
+import 'package:sermon_atlas/cubit/login_cubit.dart';
 import 'package:sermon_atlas/data/sermon_repository.dart';
 import 'package:sermon_atlas/data/signup_repository.dart';
+import 'package:sermon_atlas/data/login_repository.dart';
 //import 'package:sermon_atlas/pages/sermon_search_page.dart';
 import 'package:sermon_atlas/pages/login.dart';
 
@@ -34,7 +36,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/pages/login.dart';
-import 'package:sermon_atlas/pages/loginFirst.dart';
 import 'package:sermon_atlas/pages/signup.dart';
 import 'package:sermon_atlas/pages/sermon_search_page.dart';
 
@@ -98,12 +99,14 @@ class _AppState extends State<App> {
           BlocProvider<SignupCubit>(
             create: (context) => SignupCubit(FakeSignupRepository()),
           ),
+          BlocProvider<LoginCubit>(
+            create: (context) => LoginCubit(FakeLoginRepository()),
+          ),
         ],
         child: MaterialApp(
           routes: <String, WidgetBuilder>{
             '/loginPage': (BuildContext context) => new LoginPage(),
             '/signupPage': (BuildContext context) => new SignUpPage(),
-            '/try': (BuildContext context) => new MyPage(),
             '/sermonSearchPage': (BuildContext context) => new SermonSearchPage(),
           },
           title: 'Material App',

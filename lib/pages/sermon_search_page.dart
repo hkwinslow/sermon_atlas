@@ -31,25 +31,23 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
             }
           },
           builder: (context, state) {
+            
             if (state is SermonInitial) {
-              return buildInitialInput();
+              final sermonCubit = context.bloc<SermonCubit>();
+              sermonCubit.getSermon('cityName');
+              return Container();
+
             } else if (state is SermonLoading) {
               return buildLoading();
             } else if (state is SermonLoaded) {
               return buildColumnWithData(state.sermon);
             } else {
               // (state is SermonError)
-              return buildInitialInput();
+              return Container();
             }
           },
         ),
       ),
-    );
-  }
-
-  Widget buildInitialInput() {
-    return Center(
-      child: CityInputField(),
     );
   }
 
