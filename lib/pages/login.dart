@@ -51,7 +51,8 @@ class _LoginPageState extends State<LoginPage> {
                   return tryingFirebase();
                 } else if (state is LoginComplete) {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.pushReplacementNamed(context, '/sermonSearchPage');
+                    Navigator.pushReplacementNamed(
+                        context, '/sermonSearchPage');
                   });
                   //TODO: should i really be resetting state right here or
                   //will having a login bloc solve this problem?
@@ -79,26 +80,39 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        SizedBox(
-          height: 155.0,
-          child: Image.asset(
-            "assets/church_img.png",
-            fit: BoxFit.contain,
+        ExcludeSemantics(
+          child: SizedBox(
+            height: 155.0,
           ),
         ),
-        SizedBox(height: 45.0),
+        Image.asset("assets/church_img.png", fit: BoxFit.contain, semanticLabel: 'Church', ),
+        ExcludeSemantics(
+          child: SizedBox(height: 45.0),
+        ),
         emailField(),
-        SizedBox(height: 25.0),
+        ExcludeSemantics(
+          child: SizedBox(height: 25.0),
+        ),
         passwordField(),
-        SizedBox(
-          height: 35.0,
+        ExcludeSemantics(
+          child: SizedBox(
+            height: 35.0,
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [loginButton(), SizedBox(width: 10), signupButton()],
+          children: [
+            loginButton(),
+            ExcludeSemantics(
+              child: SizedBox(width: 10),
+            ),
+            signupButton()
+          ],
         ),
-        SizedBox(
-          height: 15.0,
+        ExcludeSemantics(
+          child: SizedBox(
+            height: 15.0,
+          ),
         ),
       ],
     );
@@ -143,7 +157,6 @@ class _LoginPageState extends State<LoginPage> {
 
           final loginCubit = context.bloc<LoginCubit>();
           loginCubit.getLogin(_emailController.text, _passwordController.text);
-
         },
         child: Text("Login",
             textAlign: TextAlign.center,

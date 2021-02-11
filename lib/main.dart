@@ -114,18 +114,4 @@ class _AppState extends State<App> {
           home: LoginPage(),
         ));
   }
-  // Widget build(BuildContext context) {
-  //   // Show error message if initialization failed
-  //   if(_error) {
-  //     //return SomethingWentWrong();
-  //   }
-
-  //   // Show a loader until FlutterFire is initialized
-  //   if (!_initialized) {
-  //     //return Loading();
-  //   }
-  //   print('HLLO0oooooooooooooooooooooooooooooooooo');
-
-  //   return LoginPage();
-  // }
 }
