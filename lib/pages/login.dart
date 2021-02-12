@@ -85,7 +85,11 @@ class _LoginPageState extends State<LoginPage> {
             height: 155.0,
           ),
         ),
-        Image.asset("assets/church_img.png", fit: BoxFit.contain, semanticLabel: 'Church', ),
+        Image.asset(
+          "assets/church_img.png",
+          fit: BoxFit.contain,
+          semanticLabel: 'Church',
+        ),
         ExcludeSemantics(
           child: SizedBox(height: 45.0),
         ),
@@ -119,15 +123,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget emailField() {
-    return TextField(
-      controller: _emailController,
-      obscureText: false,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    return Semantics(
+      value: 'hi',
+      label: 'hello',
+      hint: 'press this',
+      child: TextField(
+        controller: _emailController,
+        obscureText: false,
+        style: style,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            hintText: "Email",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+      ),
     );
   }
 
