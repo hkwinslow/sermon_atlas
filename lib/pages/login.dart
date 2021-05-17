@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget emailField() {
+  Widget emailField() { 
     return TextField(
       controller: _emailController,
       obscureText: false,
