@@ -34,7 +34,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
             
             if (state is SermonInitial) {
               final sermonCubit = context.bloc<SermonCubit>();
-              sermonCubit.getSermon('cityName');
+              sermonCubit.getSermon();
               return Container();
 
             } else if (state is SermonLoading) {
@@ -104,7 +104,9 @@ class CityInputField extends StatelessWidget {
   }
 
   void submitCityName(BuildContext context, String cityName) {
+    //I think this section will act as a search query text field. So I will eventually
+    // call a query and then return the applicable entries
     final sermonCubit = context.bloc<SermonCubit>();
-    sermonCubit.getSermon(cityName);
+    sermonCubit.getSermon();
   }
 }

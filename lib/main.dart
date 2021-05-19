@@ -94,7 +94,7 @@ class _AppState extends State<App> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<SermonCubit>(
-            create: (context) => SermonCubit(FakeSermonRepository()),
+            create: (context) => SermonCubit(SermonRepository()),
           ),
           BlocProvider<SignupCubit>(
             create: (context) => SignupCubit(FakeSignupRepository()),

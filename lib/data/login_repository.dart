@@ -16,6 +16,7 @@ class FakeLoginRepository implements LoginRepository {
           .signInWithEmailAndPassword(email: email, password: password);
 
       print(userCredential.user.email + " successfully signed in");
+      print(userCredential.user.uid + 'here is the UID');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
