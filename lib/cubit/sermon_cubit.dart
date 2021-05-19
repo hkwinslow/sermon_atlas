@@ -20,12 +20,11 @@ class SermonCubit extends Cubit<SermonState> {
     }
   }
 
-  Future<void> addSermon(String cityName) async {
+  Future<void> addSermon(String title, String location, DateTime sermonDate) async {
     try {
       emit(SermonLoading());
       try {
-        await _sermonRepository.addUser();
-
+        await _sermonRepository.addSermons(title, location, sermonDate);
       }
       catch (Exception){
         emit(SermonError("Something went wrong. Couldn't add sermon."));

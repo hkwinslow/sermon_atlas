@@ -4,16 +4,43 @@ import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/data/model/sermon.dart';
 import 'package:intl/intl.dart';
 
-
 class SermonSearchPage extends StatefulWidget {
   @override
   _SermonSearchPageState createState() => _SermonSearchPageState();
 }
 
 class _SermonSearchPageState extends State<SermonSearchPage> {
+  TextEditingController _titleController;
+  TextEditingController _locationController;
+  TextEditingController _dateController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController();
+    _locationController = TextEditingController();
+    _dateController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _locationController.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          // Add sermon page pops up
+          _showMyDialog(context);
+        },
+      ),
       appBar: AppBar(
         title: Image.asset('assets/church_img.png', height: 80),
       ),
@@ -31,12 +58,10 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
             }
           },
           builder: (context, state) {
-            
             if (state is SermonInitial) {
               final sermonCubit = context.bloc<SermonCubit>();
               sermonCubit.getSermon();
               return Container();
-
             } else if (state is SermonLoading) {
               return buildLoading();
             } else if (state is SermonLoaded) {
@@ -77,6 +102,60 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
       ],
     );
   }
+
+  Future<void> _showMyDialog(context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('add a sermon'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Title',
+                  ),
+                ),
+                TextField(
+                  controller: _locationController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Location',
+                  ),
+                ),
+                TextField(
+                  controller: _dateController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Date',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Submit'),
+              onPressed: () {
+                final sermonCubit = context.bloc<SermonCubit>();
+
+                sermonCubit.addSermon(_titleController.text, _locationController.text,
+                DateTime.parse(_dateController.text));
+
+                sermonCubit.getSermon();
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 String formatDateTime(DateTime dateTime) {
@@ -84,7 +163,6 @@ String formatDateTime(DateTime dateTime) {
 }
 
 class CityInputField extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Padding(

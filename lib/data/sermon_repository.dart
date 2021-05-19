@@ -13,10 +13,12 @@ class SermonRepository {
 
   var firebaseUser = FirebaseAuth.instance.currentUser;
 
+
   Future<List<Sermon>> getSermons()  {
     List<Sermon> sermons = new List<Sermon>();
     
     FirebaseFirestore.instance
+    
     .collection('users').doc(firebaseUser.uid).collection('sermons')
     .get()
     .then((QuerySnapshot querySnapshot) {
@@ -25,7 +27,7 @@ class SermonRepository {
             sermons.add(new Sermon(
         title: doc["title"],
         location: doc["location"],
-        date: DateTime.parse(doc["date"])));
+        date: doc["date"].toDate()));
 
         });
     });
@@ -43,7 +45,7 @@ class SermonRepository {
   
   
 
-  Future<void> addUser() {
+  Future<void> addSermons(String title, String location, DateTime sermonDate) {
 
     CollectionReference users = FirebaseFirestore.instance
         .collection('users')
@@ -53,9 +55,9 @@ class SermonRepository {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
-          'title': 'Love Your Enemy',
-          'location': 'Bridgeport',
-          'date': 'January 5, 1988'
+          'title': title,
+          'location': location,
+          'date': sermonDate
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
