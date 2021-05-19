@@ -1,51 +1,67 @@
 import 'dart:math';
+import 'package:flutter/material.dart';
+
 import 'model/sermon.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class SermonRepository {
-  /// Throws [NetworkException].
-  Future<List<Sermon>> fetchSermon(String cityName);
-}
+class SermonRepository {
+  //final String fullName;
+  //final String company;
+  //final int age;
 
-class FakeSermonRepository implements SermonRepository {
-  @override
-  Future<List<Sermon>> fetchSermon(String cityName) {
+  var firebaseUser = FirebaseAuth.instance.currentUser;
+
+  Future<List<Sermon>> getSermons()  {
     List<Sermon> sermons = new List<Sermon>();
-    sermons.add(new Sermon(title: 'Faith', location: 'Norman', date: DateTime.parse("2016-02-17")));
-    sermons.add(new Sermon(title: 'Love', location: 'Purcell', date: DateTime.parse("2012-08-12")));
-    sermons.add(new Sermon(title: 'Hope', location: 'Penn South', date: DateTime.parse("2018-12-14")));
-    sermons.add(new Sermon(title: 'Ressurrection', location: 'Amarillo', date: DateTime.parse("2020-01-28")));
-    sermons.add(new Sermon(title: 'Joy', location: 'Pasadena', date: DateTime.parse("2015-05-03")));
-    sermons.add(new Sermon(title: 'Names of God', location: 'Bridgeport', date: DateTime.parse("2017-09-30")));
-    sermons.add(new Sermon(title: 'Jesus\' Parables', location: 'Ardmore', date: DateTime.parse("2019-07-02")));
-    sermons.add(new Sermon(title: 'Woman at the Well', location: 'Tulsa', date: DateTime.parse("2017-03-18")));
-    sermons.add(new Sermon(title: 'Visions of Zechariah', location: 'Plainview', date: DateTime.parse("2020-11-08")));
-    sermons.add(new Sermon(title: 'Love our Enemies', location: 'Elk City', date: DateTime.parse("2011-10-31")));
-    sermons.add(new Sermon(title: 'Marriage', location: 'Sooner East', date: DateTime.parse("2019-06-05")));
-    sermons.add(new Sermon(title: 'Salvation', location: 'Seminole', date: DateTime.parse("2018-04-22")));
-    sermons.add(new Sermon(title: 'Baptism', location: 'College Park', date: DateTime.parse("2016-12-25")));
-    sermons.add(new Sermon(title: 'The Church', location: 'Pearland', date: DateTime.parse("2017-07-19")));
-    sermons.add(new Sermon(title: 'Creation', location: 'Orange', date: DateTime.parse("2020-02-17")));
-    sermons.add(new Sermon(title: 'Forgiveness', location: 'Norman', date: DateTime.parse("2019-05-30")));
-    sermons.add(new Sermon(title: 'Redemption', location: 'Ft. Smith', date: DateTime.parse("2018-09-11")));
+    
+    FirebaseFirestore.instance
+    .collection('users').doc(firebaseUser.uid).collection('sermons')
+    .get()
+    .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+            print(doc["title"]);
+            sermons.add(new Sermon(
+        title: doc["title"],
+        location: doc["location"],
+        date: DateTime.parse(doc["date"])));
 
-    // Simulate network delay
+        });
+    });
+
     return Future.delayed(
       Duration(seconds: 1),
       () {
         final random = Random();
 
-        // Simulate some network exception
-        //TODO: uncomment 3 lines below if I want to randomly throw error state to
-        //test that state in the bloc. But when I have db then the error state
-        //shouldn't be random, it should be when db fails to add, update, delete or search
-        // if (random.nextBool()) {
-        //   throw NetworkException();
-        // }
-
         return sermons;
       },
     );
+      
   }
+  
+  
+
+  Future<void> addUser() {
+
+    CollectionReference users = FirebaseFirestore.instance
+        .collection('users')
+        .doc(firebaseUser.uid)
+        .collection('sermons');
+
+    // Call the user's CollectionReference to add a new user
+    return users
+        .add({
+          'title': 'Love Your Enemy',
+          'location': 'Bridgeport',
+          'date': 'January 5, 1988'
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
 }
 
 class NetworkException implements Exception {}
+

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sermon_atlas/cubit/sermon_cubit.dart';
-import 'package:sermon_atlas/data/sermon_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sermon_atlas/cubit/signup_cubit.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key, this.title}) : super(key: key);
@@ -26,85 +25,61 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextField(
-      controller: _emailController,
-      obscureText: false,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final passwordField = TextField(
-      controller: _passwordController,
-      obscureText: true,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final confirmPasswordField = TextField(
-      controller: _confirmPasswordController,
-      obscureText: true,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Confirm Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final registerButton = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        //minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          // try {
-          //   UserCredential userCredential = await FirebaseAuth.instance
-          //       .signInWithEmailAndPassword(
-          //           email: _emailController.text,
-          //           password: _passwordController.text);
-          //   print(userCredential.user.email + " successfully signed in");
-
-          // } on FirebaseAuthException catch (e) {
-          //   if (e.code == 'user-not-found') {
-          //     print('No user found for that email.');
-          //   } else if (e.code == 'wrong-password') {
-          //     print('Wrong password provided for that user.');
-          //   }
-          // }
-          try {
-            UserCredential userCredential = await FirebaseAuth.instance
-                .createUserWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _confirmPasswordController.text);
-                    print('Successfully created account for ' + _emailController.text);
-                    Navigator.pushReplacementNamed(context, '/screen1');
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'weak-password') {
-              print('The password provided is too weak.');
-            } else if (e.code == 'email-already-in-use') {
-              print('The account already exists for that email.');
-            }
-          } catch (e) {
-            print(e);
-          }
-        },
-        child: Text("Sign Up",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
     return Scaffold(
       body: Center(
         child: Container(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        alignment: Alignment.center,
+        child: BlocConsumer<SignupCubit, SignupState>(
+          listener: (context, state) {
+            if (state is SignupError) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                ),
+              );
+              //Reset state to initial or it will only ever show first error and no subsequent errors
+              context.bloc<SignupCubit>().emit(SignupInitial());
+            }
+          },
+          builder: (context, state) {
+            if (state is SignupInitial) {
+              return signupLayout();
+            } else if (state is SignupLoading) {
+              return tryingFirebase();
+            } else if (state is SignupComplete) {
+              
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                Navigator.pushReplacementNamed(context, '/loginPage');
+                ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Sign-up complete. Please login.'),
+                ),
+              );
+              });
+              //TODO: should i really be resetting state right here or
+              //will having a login bloc solve this problem?
+              context.bloc<SignupCubit>().emit(SignupInitial());
+              return Container();
+              
+            } else {
+              return signupLayout();
+            }
+          },
+        ),
+      ),
+      )
+    );
+  }
+
+  Widget tryingFirebase() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget signupLayout() {
+    return Container(
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(36.0),
@@ -120,22 +95,85 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
                 SizedBox(height: 45.0),
-                emailField,
+                emailField(),
                 SizedBox(height: 25.0),
-                passwordField,
+                passwordField(),
                 SizedBox(height: 25.0),
-                confirmPasswordField,
+                confirmPasswordField(),
                 SizedBox(
                   height: 35.0,
                 ),
-                registerButton,
+                registerButton(),
                 SizedBox(
                   height: 15.0,
                 ),
               ],
             ),
           ),
-        ),
+        );
+  }
+
+  Widget emailField() {
+    return TextField(
+      controller: _emailController,
+      obscureText: false,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Email",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+  }
+
+  Widget passwordField() {
+    return TextField(
+      controller: _passwordController,
+      obscureText: true,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Password",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+  }
+
+  Widget confirmPasswordField() {
+    return TextField(
+      controller: _confirmPasswordController,
+      obscureText: true,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Confirm Password",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+  }
+
+  Widget registerButton() {
+    return Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        //minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () {
+
+          final signupCubit = context.bloc<SignupCubit>();
+          if (_passwordController.text == _confirmPasswordController.text) {
+            signupCubit.getSignup(_emailController.text, _passwordController.text);
+          }
+          else {
+            signupCubit.emit(SignupError('Passwords do not match'));
+          }
+        },
+        child: Text("Sign Up",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }

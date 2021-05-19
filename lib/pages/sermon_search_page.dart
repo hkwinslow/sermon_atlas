@@ -31,25 +31,23 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
             }
           },
           builder: (context, state) {
+            
             if (state is SermonInitial) {
-              return buildInitialInput();
+              final sermonCubit = context.bloc<SermonCubit>();
+              sermonCubit.getSermon();
+              return Container();
+
             } else if (state is SermonLoading) {
               return buildLoading();
             } else if (state is SermonLoaded) {
               return buildColumnWithData(state.sermon);
             } else {
               // (state is SermonError)
-              return buildInitialInput();
+              return Container();
             }
           },
         ),
       ),
-    );
-  }
-
-  Widget buildInitialInput() {
-    return Center(
-      child: CityInputField(),
     );
   }
 
@@ -106,7 +104,9 @@ class CityInputField extends StatelessWidget {
   }
 
   void submitCityName(BuildContext context, String cityName) {
+    //I think this section will act as a search query text field. So I will eventually
+    // call a query and then return the applicable entries
     final sermonCubit = context.bloc<SermonCubit>();
-    sermonCubit.getSermon(cityName);
+    sermonCubit.getSermon();
   }
 }

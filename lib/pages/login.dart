@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sermon_atlas/cubit/sermon_cubit.dart';
-import 'package:sermon_atlas/data/sermon_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
+import 'package:sermon_atlas/cubit/login_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/scheduler.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -25,7 +26,86 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final emailField = TextField(
+    return Scaffold(
+      body: Center(
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: BlocConsumer<LoginCubit, LoginState>(
+              listener: (context, state) {
+                if (state is LoginError) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                    ),
+                  );
+                  //Reset state to initial or it will only ever show first error and no subsequent errors
+                  context.bloc<LoginCubit>().emit(LoginInitial());
+                }
+              },
+              builder: (context, state) {
+                if (state is LoginInitial) {
+                  return loginLayout();
+                } else if (state is LoginLoading) {
+                  return tryingFirebase();
+                } else if (state is LoginComplete) {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    Navigator.pushReplacementNamed(context, '/sermonSearchPage');
+                  });
+                  //TODO: should i really be resetting state right here or
+                  //will having a login bloc solve this problem?
+                  context.bloc<LoginCubit>().emit(LoginInitial());
+                  return Container();
+                } else {
+                  return loginLayout();
+                }
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget tryingFirebase() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget loginLayout() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 155.0,
+          child: Image.asset(
+            "assets/church_img.png",
+            fit: BoxFit.contain,
+          ),
+        ),
+        SizedBox(height: 45.0),
+        emailField(),
+        SizedBox(height: 25.0),
+        passwordField(),
+        SizedBox(
+          height: 35.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [loginButton(), SizedBox(width: 10), signupButton()],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+      ],
+    );
+  }
+
+  Widget emailField() { 
+    return TextField(
       controller: _emailController,
       obscureText: false,
       style: style,
@@ -35,7 +115,10 @@ class _LoginPageState extends State<LoginPage> {
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
-    final passwordField = TextField(
+  }
+
+  Widget passwordField() {
+    return TextField(
       controller: _passwordController,
       obscureText: true,
       style: style,
@@ -45,29 +128,22 @@ class _LoginPageState extends State<LoginPage> {
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
-    final loginButton = Material(
+  }
+
+  Widget loginButton() {
+    return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         //minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          try {
-            print('Trying firebase');
-            UserCredential userCredential = await FirebaseAuth.instance
-                .signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text);
-            print(userCredential.user.email + " successfully signed in");
-            Navigator.pushReplacementNamed(context, '/sermonSearchPage');
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'user-not-found') {
-              print('No user found for that email.');
-            } else if (e.code == 'wrong-password') {
-              print('Wrong password provided for that user.');
-            }
-          }
+        onPressed: () {
+          //Note: used to have async after onPressed:() and before {
+
+          final loginCubit = context.bloc<LoginCubit>();
+          loginCubit.getLogin(_emailController.text, _passwordController.text);
+
         },
         child: Text("Login",
             textAlign: TextAlign.center,
@@ -75,56 +151,21 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-    final signupButton = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        //minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: ()  {
-          Navigator.pushReplacementNamed(context, '/screen2');
-        },
-        child: Text("Sign Up",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
+  }
 
-    return Scaffold(
-      body: Center(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 155.0,
-                  child: Image.asset(
-                    "assets/church_img.png",
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 45.0),
-                emailField,
-                SizedBox(height: 25.0),
-                passwordField,
-                SizedBox(
-                  height: 35.0,
-                ),
-                loginButton,
-                signupButton,
-                SizedBox(
-                  height: 15.0,
-                ),
-              ],
-            ),
-          ),
-        ),
+  Widget signupButton() {
+    return RichText(
+      text: TextSpan(
+        style: TextStyle(color: Colors.blue),
+        children: <TextSpan>[
+          TextSpan(
+              text: 'New user? Sign up',
+              style: TextStyle(color: Colors.blue),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.pushReplacementNamed(context, '/signupPage');
+                }),
+        ],
       ),
     );
   }
