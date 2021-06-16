@@ -106,10 +106,10 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
   Future<void> _showMyDialog(context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('add a sermon'),
+          title: const Text('Add a Sermon'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -120,6 +120,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
                     labelText: 'Title',
                   ),
                 ),
+                SizedBox(height: 10),
                 TextField(
                   controller: _locationController,
                   decoration: InputDecoration(
@@ -127,6 +128,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
                     labelText: 'Location',
                   ),
                 ),
+                SizedBox(height: 10),
                 TextField(
                   controller: _dateController,
                   decoration: InputDecoration(
@@ -143,10 +145,18 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
               onPressed: () {
                 final sermonCubit = context.bloc<SermonCubit>();
 
+                //TODO: return a success or error code/message
+                // if successful, clear controllers, get sermon and pop page
+                // if unsuccessful... not sure yet. Keep info in text fields and have them try again?
+                // provide an exit out of alert dialog in case it keeps not working.
                 sermonCubit.addSermon(_titleController.text, _locationController.text,
                 DateTime.parse(_dateController.text));
 
                 sermonCubit.getSermon();
+
+                _titleController.clear();
+                _locationController.clear();
+                _dateController.clear();
 
                 Navigator.of(context).pop();
               },
@@ -172,7 +182,7 @@ class CityInputField extends StatelessWidget {
           onSubmitted: (value) => submitCityName(context, value),
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: "Enter a city",
+            hintText: "Search",
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: Icon(Icons.search),
           ),
