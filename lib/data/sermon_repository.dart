@@ -14,12 +14,14 @@ class SermonRepository {
   var firebaseUser = FirebaseAuth.instance.currentUser;
 
 
-  Future<List<Sermon>> getSermons()  {
+  Future<List<Sermon>> getSermons(String location)  {
     List<Sermon> sermons = new List<Sermon>();
     
     FirebaseFirestore.instance
     
     .collection('users').doc(firebaseUser.uid).collection('sermons')
+    .where('location', isEqualTo: location)
+    //.orderBy('date', descending: true)
     .get()
     .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
@@ -43,7 +45,7 @@ class SermonRepository {
       
   }
   
-  
+
 
   Future<void> addSermons(String title, String location, DateTime sermonDate) {
 

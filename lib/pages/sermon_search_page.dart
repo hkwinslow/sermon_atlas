@@ -60,7 +60,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
           builder: (context, state) {
             if (state is SermonInitial) {
               final sermonCubit = context.bloc<SermonCubit>();
-              sermonCubit.getSermon();
+              sermonCubit.getSermon(null);
               return Container();
             } else if (state is SermonLoading) {
               return buildLoading();
@@ -152,7 +152,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
                 sermonCubit.addSermon(_titleController.text, _locationController.text,
                 DateTime.parse(_dateController.text));
 
-                sermonCubit.getSermon();
+                sermonCubit.getSermon(null);
 
                 _titleController.clear();
                 _locationController.clear();
@@ -182,7 +182,7 @@ class CityInputField extends StatelessWidget {
           onSubmitted: (value) => submitCityName(context, value),
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: "Search",
+            hintText: "Search Location",
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: Icon(Icons.search),
           ),
@@ -191,10 +191,10 @@ class CityInputField extends StatelessWidget {
     );
   }
 
-  void submitCityName(BuildContext context, String cityName) {
+  void submitCityName(BuildContext context, String location) {
     //I think this section will act as a search query text field. So I will eventually
     // call a query and then return the applicable entries
     final sermonCubit = context.bloc<SermonCubit>();
-    sermonCubit.getSermon();
+    sermonCubit.getSermon(location);
   }
 }

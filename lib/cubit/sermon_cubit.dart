@@ -10,10 +10,10 @@ class SermonCubit extends Cubit<SermonState> {
 
   SermonCubit(this._sermonRepository) : super(SermonInitial());
 
-  Future<void> getSermon() async {
+  Future<void> getSermon(String location) async {
     try {
       emit(SermonLoading());
-      final sermons = await _sermonRepository.getSermons();
+      final sermons = await _sermonRepository.getSermons(location);
       emit(SermonLoaded(sermons));
     } on NetworkException {
       emit(SermonError("Couldn't fetch sermons. Is the device online?"));
