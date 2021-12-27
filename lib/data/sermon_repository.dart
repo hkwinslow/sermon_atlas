@@ -21,7 +21,7 @@ class SermonRepository {
     
     .collection('users').doc(firebaseUser.uid).collection('sermons')
     .where('location', isEqualTo: location)
-    //.orderBy('date', descending: true)
+    .orderBy('date', descending: true)
     .get()
     .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
