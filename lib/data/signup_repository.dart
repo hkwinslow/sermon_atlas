@@ -8,8 +8,8 @@ abstract class SignupRepository {
 class FakeSignupRepository implements SignupRepository {
   @override
   Future<List<String>> fetchSignup(String email, String password) async {
-    List<String> result = new List<String>();
-    UserCredential userCredential;
+    List<String> result = [];
+    late UserCredential userCredential;
 
     try {
       userCredential = await FirebaseAuth.instance
@@ -26,11 +26,11 @@ class FakeSignupRepository implements SignupRepository {
       result.add(e.code);
     } catch (e) {
       print(e);
-      result.add(e.code);
+      //result.add(e.code);
     }
 
     if (userCredential != null) {
-          List<String> a = new List<String>();
+          List<String> a = [];
           a.add('success');
           return a;
 

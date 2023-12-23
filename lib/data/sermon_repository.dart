@@ -15,11 +15,11 @@ class SermonRepository {
 
 
   Future<List<Sermon>> getSermons(String location)  {
-    List<Sermon> sermons = new List<Sermon>();
+    List<Sermon> sermons = [];
     
     FirebaseFirestore.instance
     
-    .collection('users').doc(firebaseUser.uid).collection('sermons')
+    .collection('users').doc(firebaseUser?.uid).collection('sermons')
     .where('location', isEqualTo: location)
     .orderBy('date', descending: true)
     .get()
@@ -42,6 +42,7 @@ class SermonRepository {
         return sermons;
       },
     );
+    
       
   }
   
@@ -51,7 +52,7 @@ class SermonRepository {
 
     CollectionReference users = FirebaseFirestore.instance
         .collection('users')
-        .doc(firebaseUser.uid)
+        .doc(firebaseUser?.uid)
         .collection('sermons');
 
     // Call the user's CollectionReference to add a new user

@@ -8,15 +8,15 @@ abstract class LoginRepository {
 class FakeLoginRepository implements LoginRepository {
   @override
   Future<List<String>> fetchLogin(String email, String password) async {
-    List<String> result = new List<String>();
+    List<String> result = [];
     UserCredential userCredential;
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-      print(userCredential.user.email + " successfully signed in");
-      print(userCredential.user.uid + 'here is the UID');
+      //print(userCredential.user.email ? + " successfully signed in");
+      //print(userCredential.user.uid + 'here is the UID');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');

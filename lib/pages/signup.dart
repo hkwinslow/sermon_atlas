@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sermon_atlas/cubit/signup_cubit.dart';
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({Key key, this.title}) : super(key: key);
+  SignUpPage({Key? key, required this.title}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -33,13 +33,13 @@ class _SignUpPageState extends State<SignUpPage> {
         child: BlocConsumer<SignupCubit, SignupState>(
           listener: (context, state) {
             if (state is SignupError) {
-              Scaffold.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
                 ),
               );
               //Reset state to initial or it will only ever show first error and no subsequent errors
-              context.bloc<SignupCubit>().emit(SignupInitial());
+              context.read<SignupCubit>().emit(SignupInitial());
             }
           },
           builder: (context, state) {
@@ -59,7 +59,7 @@ class _SignUpPageState extends State<SignUpPage> {
               });
               //TODO: should i really be resetting state right here or
               //will having a login bloc solve this problem?
-              context.bloc<SignupCubit>().emit(SignupInitial());
+              context.read<SignupCubit>().emit(SignupInitial());
               return Container();
               
             } else {
@@ -162,7 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
 
-          final signupCubit = context.bloc<SignupCubit>();
+          final signupCubit = context.read<SignupCubit>();
           if (_passwordController.text == _confirmPasswordController.text) {
             signupCubit.getSignup(_emailController.text, _passwordController.text);
           }

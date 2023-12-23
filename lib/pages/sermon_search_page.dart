@@ -10,9 +10,9 @@ class SermonSearchPage extends StatefulWidget {
 }
 
 class _SermonSearchPageState extends State<SermonSearchPage> {
-  TextEditingController _titleController;
-  TextEditingController _locationController;
-  TextEditingController _dateController;
+  late TextEditingController _titleController;
+  late TextEditingController _locationController;
+  late TextEditingController _dateController;
 
 
   @override
@@ -50,7 +50,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
         child: BlocConsumer<SermonCubit, SermonState>(
           listener: (context, state) {
             if (state is SermonError) {
-              Scaffold.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
                 ),
@@ -59,8 +59,8 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
           },
           builder: (context, state) {
             if (state is SermonInitial) {
-              final sermonCubit = context.bloc<SermonCubit>();
-              sermonCubit.getSermon(null);
+              final sermonCubit = context.read<SermonCubit>();
+              sermonCubit.getSermon('');
               return Container();
             } else if (state is SermonLoading) {
               return buildLoading();
@@ -143,7 +143,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
             TextButton(
               child: const Text('Submit'),
               onPressed: () {
-                final sermonCubit = context.bloc<SermonCubit>();
+                final sermonCubit = context.read<SermonCubit>();
 
                 //TODO: return a success or error code/message
                 // if successful, clear controllers, get sermon and pop page
@@ -152,7 +152,7 @@ class _SermonSearchPageState extends State<SermonSearchPage> {
                 sermonCubit.addSermon(_titleController.text, _locationController.text,
                 DateTime.parse(_dateController.text));
 
-                sermonCubit.getSermon(null);
+                sermonCubit.getSermon('');
 
                 _titleController.clear();
                 _locationController.clear();
@@ -194,7 +194,7 @@ class CityInputField extends StatelessWidget {
   void submitCityName(BuildContext context, String location) {
     //I think this section will act as a search query text field. So I will eventually
     // call a query and then return the applicable entries
-    final sermonCubit = context.bloc<SermonCubit>();
+    final sermonCubit = context.read<SermonCubit>();
     sermonCubit.getSermon(location);
   }
 }

@@ -38,6 +38,7 @@ import 'package:sermon_atlas/cubit/sermon_cubit.dart';
 import 'package:sermon_atlas/pages/login.dart';
 import 'package:sermon_atlas/pages/signup.dart';
 import 'package:sermon_atlas/pages/sermon_search_page.dart';
+import 'firebase_options.dart';
 
 void main() {
   runApp(App());
@@ -56,7 +57,10 @@ class _AppState extends State<App> {
   void initializeFlutterFire() async {
     try {
       // Wait for Firebase to initialize and set `_initialized` state to true
-      await Firebase.initializeApp();
+      //await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       setState(() {
         _initialized = true;
       });
@@ -105,13 +109,16 @@ class _AppState extends State<App> {
         ],
         child: MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/loginPage': (BuildContext context) => new LoginPage(),
-            '/signupPage': (BuildContext context) => new SignUpPage(),
-            '/sermonSearchPage': (BuildContext context) => new SermonSearchPage(),
+            '/loginPage': (BuildContext context) =>
+                new LoginPage(title: 'mytitle'),
+            '/signupPage': (BuildContext context) =>
+                new SignUpPage(title: 'myothertitle'),
+            '/sermonSearchPage': (BuildContext context) =>
+                new SermonSearchPage(),
           },
           title: 'Material App',
           //home: Navigator.push(context, '/loginPage'));
-          home: LoginPage(),
+          home: LoginPage(title: 'hi'),
         ));
   }
   // Widget build(BuildContext context) {

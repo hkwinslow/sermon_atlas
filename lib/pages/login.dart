@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/scheduler.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
+  LoginPage({Key? key, required this.title}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -35,13 +35,13 @@ class _LoginPageState extends State<LoginPage> {
             child: BlocConsumer<LoginCubit, LoginState>(
               listener: (context, state) {
                 if (state is LoginError) {
-                  Scaffold.of(context).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.message),
                     ),
                   );
                   //Reset state to initial or it will only ever show first error and no subsequent errors
-                  context.bloc<LoginCubit>().emit(LoginInitial());
+                  context.read<LoginCubit>().emit(LoginInitial());
                 }
               },
               builder: (context, state) {
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                   });
                   //TODO: should i really be resetting state right here or
                   //will having a login bloc solve this problem?
-                  context.bloc<LoginCubit>().emit(LoginInitial());
+                  context.read<LoginCubit>().emit(LoginInitial());
                   return Container();
                 } else {
                   return loginLayout();
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {
           //Note: used to have async after onPressed:() and before {
 
-          final loginCubit = context.bloc<LoginCubit>();
+          final loginCubit = context.read<LoginCubit>();
           loginCubit.getLogin(_emailController.text, _passwordController.text);
 
         },

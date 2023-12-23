@@ -6,9 +6,9 @@ class Login {
   final DateTime date;
 
   Login({
-    @required this.title,
-    @required this.location,
-    @required this.date,
+    required this.title,
+    required this.location,
+    required this.date,
   });
 
   //TODO: figure out what this section means and if its correct

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "848395158442",
+    "firebase_url": "https://sermon-atlas.firebaseio.com",
+    "project_id": "sermon-atlas",
+    "storage_bucket": "sermon-atlas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:848395158442:android:39d1f24d7376057a41e1d3",
+        "android_client_info": {
+          "package_name": "com.example.sermon_atlas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "848395158442-vuek2d3qc81lmdn3rnkkdfb055ipu1nj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTBOiMnicGW5U5zPHJQk3cYIbgubqnLWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "848395158442-vuek2d3qc81lmdn3rnkkdfb055ipu1nj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "848395158442-3pqcq3719rhqsciqfq6ut3odlq9ah1v9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sermonAtlas"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
